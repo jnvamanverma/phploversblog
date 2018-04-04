@@ -1,7 +1,28 @@
 <?php include 'includes/header.php'; ?>
 <?php 
-// Create Object
-$db = new Database();
+    // Create Object
+    $db = new Database();
+
+    if(isset($_POST['submit'])){
+      // Assign Vars
+      $title = mysqli_real_escape_string($db->link, $_POST['title']);
+      $body = mysqli_real_escape_string($db->link, $_POST['body']);
+      $category = mysqli_real_escape_string($db->link, $_POST['category']);
+      $author = mysqli_real_escape_string($db->link, $_POST['author']);
+      $tags = mysqli_real_escape_string($db->link, $_POST['tags']);
+      // Simple Validation
+      if($title == '' || $body == '' || $category == '' || $author == ''){
+        // Set Error
+        $error = 'Please fill out all required fields';
+      } else {
+        $query = "INSERT INTO posts(title, body, category, author, tags) 
+        VALUES('$title', '$body', '$category', '$author', '$tags')";
+
+        $insert_row = $db->insert($query);
+      }
+    }
+?>
+<?php 
 // Create Query
 $query = "SELECT * FROM categories";
 // Execute Query
@@ -20,7 +41,7 @@ $categories = $db->select($query);
     <label>Category</label>
     <select name="category" class="form-control">
     <?php while($category = $categories->fetch_assoc()) : ?>
-        <option><?php echo $category['name'];?></option>
+        <option value="<?php echo $category['id']; ?>"><?php echo $category['name'];?></option>
     <?php endwhile; ?>
     </select>
   </div>
